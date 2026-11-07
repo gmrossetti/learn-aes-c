@@ -48,37 +48,12 @@ enum ROUND_TYPE {
 
 void add_round_key(uint8_t status[4][4], const uint8_t k[16])
 {
-    // Key matrix
-    uint8_t key[4][4];
-
-    // Key matrix
-    key[0][0] = k[0];
-    key[1][0] = k[1];
-    key[2][0] = k[2];
-    key[3][0] = k[3];
-
-    key[0][1] = k[4];
-    key[1][1] = k[5];
-    key[2][1] = k[6];
-    key[3][1] = k[7];
-
-    key[0][2] = k[8];
-    key[1][2] = k[9];
-    key[2][2] = k[10];
-    key[3][2] = k[11];
-
-    key[0][3] = k[12];
-    key[1][3] = k[13];
-    key[2][3] = k[14];
-    key[3][3] = k[15];
-
-    // Add Roundkey
     for (int i=0; i<4; i++)
     {
         for (int j=0; j<4; j++)
         {
             uint8_t pre =  status[i][j];
-            status[i][j] = status[i][j] ^ key[i][j];
+            status[i][j] = status[i][j] ^ k[j * 4 + i]; // col major access
         }
     }
 }
@@ -168,7 +143,6 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
     if (round_type != ROUND_TYPE::LAST)
     {
         // Mix Column
-
         const uint8_t mix_col_mul_matrix[4][4] = {
             {0x02, 0x03, 0x01, 0x01},
             {0x01, 0x02, 0x03, 0x01},
