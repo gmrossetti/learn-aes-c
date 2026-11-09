@@ -86,14 +86,15 @@ void sub_bytes(uint8_t status[16], int inverse)
 
 void lshift_word(uint8_t w[4], unsigned offset)
 {
-    for (int i=0; i<offset; i++)
-    {
-        const uint8_t temp = w[0];
-        w[0] = w[1];
-        w[1] = w[2];
-        w[2] = w[3];
-        w[3] = temp;
-    }
+    offset %= 4; // 0..3
+
+    if (offset == 0) return;
+
+    uint8_t tmp[4];
+    for (unsigned i = 0; i < 4; i++)
+        tmp[i] = w[(i + offset) % 4];
+
+    memcpy(w, tmp, 4);
 }
 
 void shift_rows(uint8_t status[16])
