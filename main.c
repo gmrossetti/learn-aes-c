@@ -59,19 +59,19 @@ void add_round_key(uint8_t status[16], const uint8_t k[16])
     }
 }
 
-void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round_type)
+// TODO: implement inverse
+void sub_bytes(uint8_t status[16], int inverse)
 {
-    if (round_type == ROUND_TYPE::FIRST)
+    if (inverse) return;
+
+    static uint8_t sbox[256];
+    static int sbox_initialized = false;
+
+    if (!sbox_initialized)
     {
-        add_round_key(status, k);
-        print_matrix(status);
-
-        return;
+        initialize_aes_sbox(sbox);
+        sbox_initialized = true;
     }
-
-    uint8_t sbox[256];
-
-    initialize_aes_sbox(sbox);
 
     // Substitution Bytes
     for (int i=0; i<4; i++)
@@ -82,9 +82,10 @@ void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round
             status[idx] = sbox[status[idx]];
         }
     }
+}
 
-    print_matrix(status);
-
+void shift_rows(uint8_t status[16])
+{
     // Shift Row
 
     // Row 0: nothing to do
@@ -139,6 +140,23 @@ void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round
         status[ROW * 4 + 2] = status[ROW * 4 + 3];
         status[ROW * 4 + 3] = temp;
     }
+}
+
+void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round_type)
+{
+    if (round_type == ROUND_TYPE::FIRST)
+    {
+        add_round_key(status, k);
+        print_matrix(status);
+
+        return;
+    }
+
+    sub_bytes(status, false);
+
+    print_matrix(status);
+
+    shift_rows(status);
 
     print_matrix(status);
 
