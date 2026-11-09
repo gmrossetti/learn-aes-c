@@ -4,14 +4,14 @@
 #include "lib/sbox.h"
 #include "lib/key_schedule.h"
 
-void print_matrix(uint8_t m[4][4]) {
+void print_matrix(uint8_t m[4 * 4]) {
     printf("\n|---------------------------|\n");
     for (int i=0; i<4; i++)
     {
         printf("| ");
         for (int j=0; j<4; j++)
         {
-            printf("0x%02X | ", m[i][j]);
+            printf("0x%02X | ", m[i * 4 + j]);
         }
         printf("\n");
     }
@@ -46,19 +46,20 @@ enum ROUND_TYPE {
     LAST,
 };
 
-void add_round_key(uint8_t status[4][4], const uint8_t k[16])
+void add_round_key(uint8_t status[16], const uint8_t k[16])
 {
     for (int i=0; i<4; i++)
     {
         for (int j=0; j<4; j++)
         {
-            uint8_t pre =  status[i][j];
-            status[i][j] = status[i][j] ^ k[j * 4 + i]; // col major access
+            const int idx = i * 4 + j;
+            uint8_t pre =  status[idx];
+            status[idx] = status[idx] ^ k[j * 4 + i]; // col major access
         }
     }
 }
 
-void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE round_type)
+void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round_type)
 {
     if (round_type == ROUND_TYPE::FIRST)
     {
@@ -77,7 +78,8 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
     {
         for (int j=0; j<4; j++)
         {
-            status[i][j] = sbox[status[i][j]];
+            const int idx = i * 4 + j;
+            status[idx] = sbox[status[idx]];
         }
     }
 
@@ -89,53 +91,53 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
     // Row 1: offset 1
     {
         const uint8_t ROW = 1;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
     // Row 2: offset 2
     {
         const uint8_t ROW = 2;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
     {
         const uint8_t ROW = 2;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
     // Row 3: offset 3
     {
         const uint8_t ROW = 3;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
     {
         const uint8_t ROW = 3;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
     {
         const uint8_t ROW = 3;
-        uint8_t temp = status[ROW][0];
-        status[ROW][0] = status[ROW][1];
-        status[ROW][1] = status[ROW][2];
-        status[ROW][2] = status[ROW][3];
-        status[ROW][3] = temp;
+        uint8_t temp = status[ROW * 4 + 0];
+        status[ROW * 4 + 0] = status[ROW * 4 + 1];
+        status[ROW * 4 + 1] = status[ROW * 4 + 2];
+        status[ROW * 4 + 2] = status[ROW * 4 + 3];
+        status[ROW * 4 + 3] = temp;
     }
 
     print_matrix(status);
@@ -150,7 +152,7 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
             {0x03, 0x01, 0x01, 0x02}
         };
 
-        uint8_t new_status[4][4];
+        uint8_t new_status[4 * 4];
         for (unsigned int i = 0; i < 4; i++)
         {
             for (unsigned int j = 0; j < 4; j++)
@@ -159,11 +161,11 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
 
                 for (unsigned int k = 0; k < 4; k++)
                 {
-                    uint8_t res = gf_mul(mix_col_mul_matrix[i][k], status[k][j]);
+                    uint8_t res = gf_mul(mix_col_mul_matrix[i][k], status[k * 4 + j]);
                     acc ^= res;
                 }
 
-                new_status[i][j] = acc;
+                new_status[i * 4 + j] = acc;
             }
         }
 
@@ -172,7 +174,8 @@ void round_encrypt(uint8_t status[4][4], const uint8_t k[16], const ROUND_TYPE r
         {
             for (unsigned int j = 0; j < 4; j++)
             {
-                status[i][j] = new_status[i][j];
+                const int idx = i * 4 + j;
+                status[idx] = new_status[idx];
             }
         }
 
@@ -199,28 +202,28 @@ int main(int argc, char** argv)
     generate_round_keys(k, sizeof(k), kr, N_ROWS, N_COLS);
 
     // State matrix
-    uint8_t status[4][4];
+    uint8_t status[4 * 4];
 
     // State matrix: Initial status (message displaced)
-    status[0][0] = m[0];
-    status[1][0] = m[1];
-    status[2][0] = m[2];
-    status[3][0] = m[3];
+    status[0 * 4 + 0] = m[0];
+    status[1 * 4 + 0] = m[1];
+    status[2 * 4 + 0] = m[2];
+    status[3 * 4 + 0] = m[3];
 
-    status[0][1] = m[4];
-    status[1][1] = m[5];
-    status[2][1] = m[6];
-    status[3][1] = m[7];
+    status[0 * 4 + 1] = m[4];
+    status[1 * 4 + 1] = m[5];
+    status[2 * 4 + 1] = m[6];
+    status[3 * 4 + 1] = m[7];
     
-    status[0][2] = m[8];
-    status[1][2] = m[9];
-    status[2][2] = m[10];
-    status[3][2] = m[11];
+    status[0 * 4 + 2] = m[8];
+    status[1 * 4 + 2] = m[9];
+    status[2 * 4 + 2] = m[10];
+    status[3 * 4 + 2] = m[11];
     
-    status[0][3] = m[12];
-    status[1][3] = m[13];
-    status[2][3] = m[14];
-    status[3][3] = m[15];
+    status[0 * 4 + 3] = m[12];
+    status[1 * 4 + 3] = m[13];
+    status[2 * 4 + 3] = m[14];
+    status[3 * 4 + 3] = m[15];
 
     print_matrix(status);
 
