@@ -84,61 +84,28 @@ void sub_bytes(uint8_t status[16], int inverse)
     }
 }
 
+void lshift_word(uint8_t w[4], unsigned offset)
+{
+    for (int i=0; i<offset; i++)
+    {
+        const uint8_t temp = w[0];
+        w[0] = w[1];
+        w[1] = w[2];
+        w[2] = w[3];
+        w[3] = temp;
+    }
+}
+
 void shift_rows(uint8_t status[16])
 {
-    // Shift Row
+    // Shift Rows
 
     // Row 0: nothing to do
-    // Row 1: offset 1
+    // Row 1..3:
+    for (unsigned r=1; r<=3; r++)
     {
-        const uint8_t ROW = 1;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
-    }
-    // Row 2: offset 2
-    {
-        const uint8_t ROW = 2;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
-    }
-    {
-        const uint8_t ROW = 2;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
-    }
-    // Row 3: offset 3
-    {
-        const uint8_t ROW = 3;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
-    }
-    {
-        const uint8_t ROW = 3;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
-    }
-    {
-        const uint8_t ROW = 3;
-        uint8_t temp = status[ROW * 4 + 0];
-        status[ROW * 4 + 0] = status[ROW * 4 + 1];
-        status[ROW * 4 + 1] = status[ROW * 4 + 2];
-        status[ROW * 4 + 2] = status[ROW * 4 + 3];
-        status[ROW * 4 + 3] = temp;
+        uint8_t *row = &status[r * 4];
+        lshift_word(row, r);
     }
 }
 
