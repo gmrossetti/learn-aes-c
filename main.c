@@ -228,25 +228,10 @@ int main(int argc, char** argv)
     uint8_t status[4 * 4];
 
     // State matrix: Initial status (message displaced)
-    status[0 * 4 + 0] = m[0];
-    status[1 * 4 + 0] = m[1];
-    status[2 * 4 + 0] = m[2];
-    status[3 * 4 + 0] = m[3];
-
-    status[0 * 4 + 1] = m[4];
-    status[1 * 4 + 1] = m[5];
-    status[2 * 4 + 1] = m[6];
-    status[3 * 4 + 1] = m[7];
-    
-    status[0 * 4 + 2] = m[8];
-    status[1 * 4 + 2] = m[9];
-    status[2 * 4 + 2] = m[10];
-    status[3 * 4 + 2] = m[11];
-    
-    status[0 * 4 + 3] = m[12];
-    status[1 * 4 + 3] = m[13];
-    status[2 * 4 + 3] = m[14];
-    status[3 * 4 + 3] = m[15];
+    for (int i=0; i<16; i++)
+    {
+        status[(i % 4) * 4 + (i / 4)] = m[i];
+    }
 
     print_matrix(status);
 
