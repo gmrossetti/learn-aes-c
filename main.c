@@ -142,6 +142,44 @@ void shift_rows(uint8_t status[16])
     }
 }
 
+void mix_cols(uint8_t status[16])
+{
+    // Mix Column
+    static const uint8_t mix_col_mul_matrix[4][4] = {
+        {0x02, 0x03, 0x01, 0x01},
+        {0x01, 0x02, 0x03, 0x01},
+        {0x01, 0x01, 0x02, 0x03},
+        {0x03, 0x01, 0x01, 0x02}
+    };
+
+    uint8_t new_status[4 * 4];
+    for (unsigned int i = 0; i < 4; i++)
+    {
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            uint8_t acc = 0;
+
+            for (unsigned int k = 0; k < 4; k++)
+            {
+                uint8_t res = gf_mul(mix_col_mul_matrix[i][k], status[k * 4 + j]);
+                acc ^= res;
+            }
+
+            new_status[i * 4 + j] = acc;
+        }
+    }
+
+    // updates original state matrix with new mixed values
+    for (unsigned int i = 0; i < 4; i++)
+    {
+        for (unsigned int j = 0; j < 4; j++)
+        {
+            const int idx = i * 4 + j;
+            status[idx] = new_status[idx];
+        }
+    }
+}
+
 void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round_type)
 {
     if (round_type == ROUND_TYPE::FIRST)
@@ -162,40 +200,7 @@ void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round
 
     if (round_type != ROUND_TYPE::LAST)
     {
-        // Mix Column
-        const uint8_t mix_col_mul_matrix[4][4] = {
-            {0x02, 0x03, 0x01, 0x01},
-            {0x01, 0x02, 0x03, 0x01},
-            {0x01, 0x01, 0x02, 0x03},
-            {0x03, 0x01, 0x01, 0x02}
-        };
-
-        uint8_t new_status[4 * 4];
-        for (unsigned int i = 0; i < 4; i++)
-        {
-            for (unsigned int j = 0; j < 4; j++)
-            {
-                uint8_t acc = 0;
-
-                for (unsigned int k = 0; k < 4; k++)
-                {
-                    uint8_t res = gf_mul(mix_col_mul_matrix[i][k], status[k * 4 + j]);
-                    acc ^= res;
-                }
-
-                new_status[i * 4 + j] = acc;
-            }
-        }
-
-        // updates original state matrix with new mixed values
-        for (unsigned int i = 0; i < 4; i++)
-        {
-            for (unsigned int j = 0; j < 4; j++)
-            {
-                const int idx = i * 4 + j;
-                status[idx] = new_status[idx];
-            }
-        }
+        mix_cols(status);
 
         print_matrix(status);
     }
