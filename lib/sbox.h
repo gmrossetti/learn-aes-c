@@ -4,7 +4,14 @@
 
 #define ROTL8(x,shift) ((uint8_t) ((x) << (shift)) | ((x) >> (8 - (shift))))
 
-void initialize_aes_sbox(uint8_t sbox[256]) {
+const uint8_t *aes_box()
+{
+	static uint8_t sbox[256];
+    static bool initialized = false;
+
+    if (initialized)
+        return sbox;
+
 	uint8_t p = 1, q = 1;
 	
 	/* loop invariant: p * q == 1 in the Galois field */
@@ -26,4 +33,7 @@ void initialize_aes_sbox(uint8_t sbox[256]) {
 
 	/* 0 is a special case since it has no inverse */
 	sbox[0] = 0x63;
+
+	initialized = true;
+	return sbox;
 }
