@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -7,6 +8,14 @@ typedef struct {
     uint8_t key[16];
     uint8_t msg[16];
 } aes_args;
+
+typedef enum {
+    ARGS_OK = 0,        // argomenti validi, procedi
+    ARGS_HELP,          // help richiesto, esci con successo
+    ARGS_ERR_COUNT,     // numero di argomenti sbagliato
+    ARGS_ERR_KEY,       // chiave non valida
+    ARGS_ERR_MSG,       // messaggio non valido
+} args_status;
 
 static int parse_block(const char *name, const char *s, uint8_t out[16])
 {
@@ -19,15 +28,40 @@ static int parse_block(const char *name, const char *s, uint8_t out[16])
     return 0;
 }
 
-int parse_args(int argc, char **argv, aes_args *out)
+void print_usage(const char *prog, const args_status arg_status)
 {
-    if (argc != 3)
+    if (arg_status == ARGS_HELP)
     {
-        fprintf(stderr, "Usage: %s <key:16 bytes> <message:16 bytes>\n", argv[0]);
-        return -1;
+        fprintf(stdout, "Usage: %s <key:16 bytes> <message:16 bytes>\n", prog);
+        return;
     }
 
-    if (parse_block("key", argv[1], out->key) != 0) return -1;
-    if (parse_block("message", argv[2], out->msg) != 0) return -1;
-    return 0;
+    fprintf(stderr, "Usage: %s <key:16 bytes> <message:16 bytes>\n", prog);
+}
+
+args_status parse_args(int argc, char **argv, aes_args *out)
+{
+    if (argc == 2)
+    {
+        const bool is_help_req = strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0;
+
+        if (is_help_req)
+        {
+            const args_status status = ARGS_HELP;
+            print_usage(argv[0], status);
+            return status;
+        }
+    }
+
+    if (argc != 3)
+    {
+        const args_status status = ARGS_ERR_COUNT;
+        print_usage(argv[0], status);
+        return status;
+    }
+
+    if (parse_block("key", argv[1], out->key) != 0) return ARGS_ERR_KEY;
+    if (parse_block("message", argv[2], out->msg) != 0) return ARGS_ERR_MSG;
+
+    return ARGS_OK;
 }

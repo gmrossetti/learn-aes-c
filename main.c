@@ -8,14 +8,24 @@
 int main(int argc, char** argv)
 {
     aes_args args;
-    if (parse_args(argc, argv, &args) != 0)
-        return EXIT_FAILURE;
 
-    // KEY: Thats my Kung Fu (16 ASCII characters, 1 byte each)
-    const uint8_t k[] = {0x54, 0x68, 0x61, 0x74, 0x73, 0x20, 0x6D, 0x79, 0x20, 0x4B, 0x75, 0x6E, 0x67, 0x20, 0x46, 0x75};
-    
-    // MESSAGE: Two One Nine Two (16 ASCII characters, 1 byte each)
-    const uint8_t m[] = {0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65, 0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F};
+    {
+        args_status status = parse_args(argc, argv, &args);
+
+        switch (status)
+        {
+            case ARGS_OK:
+                break;
+
+            case ARGS_HELP:
+                return EXIT_SUCCESS;
+
+            case ARGS_ERR_COUNT:
+            case ARGS_ERR_KEY:
+            case ARGS_ERR_MSG:
+                return EXIT_FAILURE;
+        }
+    }
 
     uint8_t c[16];
     encrypt(args.key, sizeof(args.key), args.msg, c);
