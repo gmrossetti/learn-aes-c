@@ -60,7 +60,7 @@ Both `<key>` and `<message>` must be exactly **16 bytes**. Use quotes if they co
 ./aes 'Thats my Kung Fu' 'Two One Nine Two'
 ```
 
-For this input the expected ciphertext is `29C3505F571420F6402299B31A02D73A`.
+For this input the expected ciphertext is `0x29C3505F571420F6402299B31A02D73A`.
 
 ## Known limitations
 
