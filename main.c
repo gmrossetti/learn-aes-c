@@ -1,23 +1,6 @@
 #include <stdio.h>
 #include <cstdint>
-
 #include "lib/aes.h"
-
-void print_matrix(uint8_t m[4 * 4]) {
-    printf("\n|---------------------------|\n");
-    for (int i=0; i<4; i++)
-    {
-        printf("| ");
-        for (int j=0; j<4; j++)
-        {
-            printf("0x%02X | ", m[i * 4 + j]);
-        }
-        printf("\n");
-    }
-    printf("|---------------------------|\n\n");
-}
-
-
 
 int main(int argc, char** argv)
 {
