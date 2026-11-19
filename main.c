@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <cstdint>
-#include <cstdlib>
+#include <stdint.h>
+#include <stdlib.h>
 
 #include "lib/cli.h"
 #include "lib/aes.h"

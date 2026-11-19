@@ -1,7 +1,9 @@
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
+
 #include "sbox.h"
 #include "key_schedule.h"
 
@@ -27,10 +29,10 @@ uint8_t gf_mul(uint8_t a, uint8_t b)
     return result;
 }
 
-enum ROUND_TYPE {
-    FIRST,
-    INTERMEDIATE,
-    LAST,
+enum AES_ROUND_TYPE {
+    AES_ROUND_FIRST,
+    AES_ROUND_INTERMEDIATE,
+    AES_ROUND_LAST,
 };
 
 void add_round_key(uint8_t status[16], const uint8_t k[16])
@@ -128,9 +130,9 @@ void mix_cols(uint8_t status[16])
     }
 }
 
-void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round_type)
+void round_encrypt(uint8_t status[], const uint8_t k[16], const enum AES_ROUND_TYPE round_type)
 {
-    if (round_type == ROUND_TYPE::FIRST)
+    if (round_type == AES_ROUND_FIRST)
     {
         add_round_key(status, k);
         return;
@@ -140,7 +142,7 @@ void round_encrypt(uint8_t status[], const uint8_t k[16], const ROUND_TYPE round
 
     shift_rows(status);
 
-    if (round_type != ROUND_TYPE::LAST)
+    if (round_type != AES_ROUND_LAST)
     {
         mix_cols(status);
     }
@@ -165,14 +167,14 @@ void encrypt(const uint8_t k[16], const size_t k_len, const uint8_t message[16],
         status[(i % 4) * 4 + (i / 4)] = message[i];
     }
 
-    round_encrypt(status, &kr[0 * N_COLS], ROUND_TYPE::FIRST);
+    round_encrypt(status, &kr[0 * N_COLS], AES_ROUND_FIRST);
 
     for (int i=1; i<10; i++)
     {
-        round_encrypt(status, &kr[i * N_COLS], ROUND_TYPE::INTERMEDIATE);
+        round_encrypt(status, &kr[i * N_COLS], AES_ROUND_INTERMEDIATE);
     }
 
-    round_encrypt(status, &kr[10 * N_COLS], ROUND_TYPE::LAST);
+    round_encrypt(status, &kr[10 * N_COLS], AES_ROUND_LAST);
 
     for (int i=0; i<16; i++)
     {

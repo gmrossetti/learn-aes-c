@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct {
     uint8_t key[16];
