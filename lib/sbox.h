@@ -10,7 +10,9 @@ const uint8_t *aes_box()
     static bool initialized = false;
 
     if (initialized)
-        return sbox;
+	{
+		return sbox;
+	}
 
 	uint8_t p = 1, q = 1;
 	

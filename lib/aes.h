@@ -42,7 +42,6 @@ void add_round_key(uint8_t status[16], const uint8_t k[16])
         for (int j=0; j<4; j++)
         {
             const int idx = i * 4 + j;
-            uint8_t pre =  status[idx];
             status[idx] = status[idx] ^ k[j * 4 + i]; // col major access
         }
     }
