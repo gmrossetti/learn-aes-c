@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "lib/cli.h"
-#include "lib/aes.h"
+#include "cli.h"
+#include "aes.h"
 
 int main(int argc, char** argv)
 {

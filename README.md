@@ -39,9 +39,11 @@ After a few rounds, changing one bit of the input or the key changes about half 
 - Implements the key expansion algorithm for the 11 round keys
 
 ## Build
-
+ 
 ```sh
-gcc -Wall -Wextra -O2 -o aes main.c
+make           # builds ./aes
+make debug     # build with AddressSanitizer/UBSan (run `make clean` first)
+make clean
 ```
 
 ## Usage

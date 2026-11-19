@@ -1,3 +1,6 @@
-*.out
-*.bak
+# Build output
+build/
 aes
+aes.exe
+*.o
+*.d
