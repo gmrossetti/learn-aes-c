@@ -2,9 +2,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "../lib/sbox.h"
-
-#include <stdio.h>
+#include "sbox.h"
 
 static const uint8_t rc[] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36};
 
@@ -19,8 +17,14 @@ void lrot_word(const uint8_t w[4], uint8_t dst[4])
 
 void sub_word(const uint8_t w[4], uint8_t dst[4])
 {
-    uint8_t sbox[256];
-    initialize_aes_sbox(sbox);
+    static uint8_t sbox[256];
+    static int sbox_initialized = false;
+
+    if (!sbox_initialized)
+    {
+        initialize_aes_sbox(sbox);
+        sbox_initialized = true;
+    }
 
     for (int i=0; i<4; i++)
     {
@@ -81,13 +85,6 @@ void gen_round_key(const uint8_t *k, size_t k_len, int round, uint8_t *dst)
         k[14],
         k[15]
     };
-
-    printf("| ");
-    for (int i=0; i<4; i++)
-    {
-        printf("0x%02X | ", w0[i]);
-    }
-    printf("\n");
 
     uint8_t w3_rot[4];
 
