@@ -51,14 +51,7 @@ void sub_bytes(uint8_t status[16], int inverse)
 {
     if (inverse) return;
 
-    static uint8_t sbox[256];
-    static int sbox_initialized = false;
-
-    if (!sbox_initialized)
-    {
-        initialize_aes_sbox(sbox);
-        sbox_initialized = true;
-    }
+    const uint8_t *sbox = aes_box();
 
     // Substitution Bytes
     for (int i=0; i<4; i++)

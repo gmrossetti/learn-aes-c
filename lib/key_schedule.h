@@ -17,14 +17,7 @@ void lrot_word(const uint8_t w[4], uint8_t dst[4])
 
 void sub_word(const uint8_t w[4], uint8_t dst[4])
 {
-    static uint8_t sbox[256];
-    static int sbox_initialized = false;
-
-    if (!sbox_initialized)
-    {
-        initialize_aes_sbox(sbox);
-        sbox_initialized = true;
-    }
+    const uint8_t *sbox = aes_box();
 
     for (int i=0; i<4; i++)
     {
