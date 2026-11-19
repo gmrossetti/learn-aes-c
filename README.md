@@ -23,7 +23,7 @@ gcc -Wall -Wextra -O2 -o aes main.c
 
 ```sh
 ./aes <key:16 bytes> <message:16 bytes>
-./aes --h
+./aes -h
 ./aes --help
 ```
 
