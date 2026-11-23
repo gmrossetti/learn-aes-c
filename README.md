@@ -43,6 +43,7 @@ After a few rounds, changing one bit of the input or the key changes about half 
 ```sh
 make           # builds ./aes
 make debug     # build with AddressSanitizer/UBSan (run `make clean` first)
+make test         # Build and run unit tests
 make clean
 ```
 
